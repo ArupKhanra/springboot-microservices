@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtUtil {
@@ -26,14 +27,19 @@ public class JwtUtil {
 
     @PostConstruct
     public void init() {
-        secretKey = Keys.hmacShaKeyFor(secret.getBytes());
+        secretKey = Keys.hmacShaKeyFor(
+                secret.getBytes(java.nio.charset.StandardCharsets.UTF_8)
+        );
     }
 
     // Access Token (15 Minutes)
-    public String generateAccessToken(String username) {
+    public String generateAccessToken(
+            String username,
+            List<String> roles) {
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(System.currentTimeMillis() + accessExpiration)
@@ -75,6 +81,12 @@ public class JwtUtil {
     }
 
     public boolean validateToken(String token) {
-        return !isTokenExpired(token);
+
+        try {
+            extractClaims(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
-@Table(name="user")
+@Table(name = "user")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +24,11 @@ public class User {
 
     private String email;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "role")
+    private List<String> roles;
 }

@@ -31,7 +31,8 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login",
+                        .requestMatchers(
+                                "/auth/login",
                                 "/auth/register",
                                 "/auth/refresh",
                                 "/auth/logout"
