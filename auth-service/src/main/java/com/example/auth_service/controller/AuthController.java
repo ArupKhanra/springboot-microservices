@@ -3,6 +3,7 @@ package com.example.auth_service.controller;
 import com.example.auth_service.entity.User;
 import com.example.auth_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.example.auth_service.dto.*;
 
@@ -42,6 +43,7 @@ public class AuthController {
         return "Logged out successfully";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/hello")
     public String hello(){
         return "Protected API";
