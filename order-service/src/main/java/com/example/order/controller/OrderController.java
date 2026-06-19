@@ -23,4 +23,8 @@ public class OrderController {
 
         return orderService.cancelOrder(id);
     }
+    @GetMapping("/test")
+    public String test() {
+        return "Order Service Working";
+    }
 }
