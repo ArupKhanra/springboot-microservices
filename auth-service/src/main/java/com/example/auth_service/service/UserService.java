@@ -29,14 +29,18 @@ public class UserService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
-
     public User registerUser(User user) {
+
         user.setPassword(
-                passwordEncoder.encode(user.getPassword()));
+                passwordEncoder.encode(user.getPassword())
+        );
+
         user.setRoles(List.of("USER"));
+
         return userRepository.save(user);
     }
 
@@ -84,9 +88,6 @@ public class UserService {
         refreshTokenEntity.setExpiryDate(
                 LocalDateTime.now().plusDays(7)
         );
-//        refreshTokenEntity.setExpiryDate(
-//                    LocalDateTime.now().minusMinutes(1)
-//            );
 
         refreshTokenEntity.setUser(user);
 
@@ -157,11 +158,11 @@ public class UserService {
                 .orElseThrow(() ->
                         new BusinessException(
                                 ErrorCode.USER_NOT_FOUND
-                        ));
+                        )
+                );
 
         user.setRoles(roles);
 
         return userRepository.save(user);
     }
-
 }
