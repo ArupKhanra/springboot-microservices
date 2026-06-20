@@ -3,6 +3,7 @@ package com.example.auth_service.service;
 import com.example.auth_service.dto.AuthResponse;
 import com.example.auth_service.dto.LoginRequest;
 import com.example.auth_service.dto.RefreshTokenRequest;
+import com.example.auth_service.dto.UserCreatedEvent;
 import com.example.auth_service.entity.RefreshToken;
 import com.example.auth_service.entity.User;
 import com.example.auth_service.exception.BusinessException;
@@ -33,6 +34,9 @@ public class UserService {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
+
     public User registerUser(User user) {
 
         user.setPassword(
@@ -41,7 +45,19 @@ public class UserService {
 
         user.setRoles(List.of("USER"));
 
-        return userRepository.save(user);
+        User savedUser =
+                userRepository.save(user);
+
+        UserCreatedEvent event =
+                UserCreatedEvent.builder()
+                        .userId(savedUser.getId())
+                        .username(savedUser.getUsername())
+                        .email(savedUser.getEmail())
+                        .build();
+
+        kafkaProducerService.sendUserCreatedEvent(event);
+
+        return savedUser;
     }
 
     @Transactional
