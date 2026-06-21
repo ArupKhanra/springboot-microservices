@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-public class UserCreatedConsumer {
+public class UserCreatedConsumerTwo {
 
     @KafkaListener(
             topics = "user-created-topic",
@@ -15,15 +15,12 @@ public class UserCreatedConsumer {
     public void consume(String message) {
 
         log.info(
-                "<<<<<<<< CONSUMER-1 <<<<<<<< {}",
+                "<<<<<<<< CONSUMER-2 <<<<<<<< {}",
                 message
         );
 
         if (message.contains("\"username\":\"43\"")) {
             throw new RuntimeException("Email Service Failed");
         }
-        log.info(
-                "Email Sent Successfully"
-        );
     }
 }

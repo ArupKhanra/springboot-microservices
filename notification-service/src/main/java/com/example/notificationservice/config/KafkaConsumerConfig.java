@@ -9,6 +9,7 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.DefaultErrorHandler;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,12 +51,20 @@ public class KafkaConsumerConfig {
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String>
-    kafkaListenerContainerFactory() {
+    kafkaListenerContainerFactory(
+            DefaultErrorHandler errorHandler
+    ) {
 
         ConcurrentKafkaListenerContainerFactory<String, String> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
 
-        factory.setConsumerFactory(consumerFactory());
+        factory.setConsumerFactory(
+                consumerFactory()
+        );
+
+        factory.setCommonErrorHandler(
+                errorHandler
+        );
 
         return factory;
     }
