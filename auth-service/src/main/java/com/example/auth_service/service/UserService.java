@@ -39,11 +39,49 @@ public class UserService {
 
     public User registerUser(User user) {
 
+        if (userRepository.existsByUsername(user.getUsername())) {
+
+            UserCreatedEvent event =
+                    UserCreatedEvent.builder()
+                            .userId(-1L)
+                            .username(user.getUsername())
+                            .email(user.getEmail())
+                            .build();
+
+            kafkaProducerService.sendUserCreatedEvent(
+                    event
+            );
+
+            throw new BusinessException(
+                    ErrorCode.USER_ALREADY_EXISTS
+            );
+        }
+
+        if (userRepository.existsByEmail(user.getEmail())) {
+
+            UserCreatedEvent event =
+                    UserCreatedEvent.builder()
+                            .userId(-1L)
+                            .username(user.getUsername())
+                            .email(user.getEmail())
+                            .build();
+
+            kafkaProducerService.sendUserCreatedEvent(
+                    event
+            );
+
+            throw new BusinessException(
+                    ErrorCode.EMAIL_ALREADY_EXISTS
+            );
+        }
+
         user.setPassword(
                 passwordEncoder.encode(user.getPassword())
         );
 
-        user.setRoles(List.of("USER"));
+        user.setRoles(
+                List.of("USER")
+        );
 
         User savedUser =
                 userRepository.save(user);
@@ -55,11 +93,12 @@ public class UserService {
                         .email(savedUser.getEmail())
                         .build();
 
-        kafkaProducerService.sendUserCreatedEvent(event);
+        kafkaProducerService.sendUserCreatedEvent(
+                event
+        );
 
         return savedUser;
     }
-
     @Transactional
     public AuthResponse login(LoginRequest request) {
 

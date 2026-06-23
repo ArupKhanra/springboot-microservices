@@ -24,6 +24,15 @@ public enum ErrorCode {
     REFRESH_TOKEN_EXPIRED(
             HttpStatus.UNAUTHORIZED,
         "Refresh token expired"
+    ),
+    USER_ALREADY_EXISTS(
+            HttpStatus.CONFLICT,
+        "Username already exists"
+    ),
+
+    EMAIL_ALREADY_EXISTS(
+            HttpStatus.CONFLICT,
+        "Email already exists"
     );
 
     private final HttpStatus status;
