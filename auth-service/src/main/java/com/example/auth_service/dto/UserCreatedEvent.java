@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCreatedEvent {
-
+    private String eventId;
     private Long userId;
     private String username;
     private String email;
